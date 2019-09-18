@@ -1,0 +1,6 @@
+        "password": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password. No '@', '!' or using the username"
+            }
+        }

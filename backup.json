@@ -183,21 +183,6 @@
 	
     "resources": [
         {
-            "type": "Microsoft.Network/publicIpAddresses",
-            "apiVersion": "2019-06-01",
-            "name": "[variables('sqlPublicIpAddressName')]",
-            "location": "[parameters('location')]",
-            "sku": {
-                "name": "[variables('sqlPublicIpAddressSku')]"
-            },
-            "properties": {
-                "publicIpAllocationMethod": "[variables('sqlPublicIpAddressType')]"
-            }
-		},
-		
-
-
-        {
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2019-02-01",
             "name": "[variables('networkSecurityGroupName')]",
