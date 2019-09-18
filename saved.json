@@ -34,6 +34,7 @@
 		"publicIpAddressSku": "Basic",
 
 		"virtualNetworkName": "[concat('mod20-', parameters('prefix'), '-vnet')]",
+		"subnetsName": "[concat('mod20-', parameters('prefix'), '-subnets')]",
 
 		"location": "[resourceGroup().location]"
     },
@@ -441,7 +442,7 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2019-06-01",
-            "name": "[concat(variables('virtualNetworkName'), '/default')]",
+            "name": "[concat(variables('subnetsName'), '/default')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
             ],
