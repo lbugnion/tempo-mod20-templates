@@ -21,20 +21,12 @@
             "metadata": {
                 "description": "The password. No '@', '!' or using the username"
             }
-		},
-
-        "location": {
-            "type": "string",
-            "metadata": {
-                "description": "Location for all resources."
-            },
-            "defaultValue": "[resourceGroup().location]"
-        }
+		}
 	},
 	
     "variables": {
-		"resourceGroupName": "[concat('mod20-', parameters('prefix'), '-tailwindtraders']",
-		"sqlVirtualMachineName": "[concat('mod20-', parameters('prefix'), '-sqlvm']",
+		"resourceGroupName": "[concat('mod20-', parameters('prefix'), '-tailwindtraders')]",
+		"sqlVirtualMachineName": "[concat('mod20-', parameters('prefix'), '-sqlvm')]",
 		"sqlVirtualMachineSize": "Standard_DS13_v2",
         "sqlPublicIpAddressName": "[concat(parameters('sqlVirtualMachineName'), '-ip')]",
         "sqlPublicIpAddressType": "Dynamic",
