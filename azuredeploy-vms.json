@@ -24,43 +24,50 @@
         "sqlVirtualMachineSize": "Standard_DS13_v2",
         "sqlPublicIpAddressName": "[concat(variables('sqlVirtualMachineName'), '-ip')]",
         "sqlNsgName": "[concat(variables('sqlVirtualMachineName'), '-nsg')]",
+        "sqlNicName": "[concat(variables('sqlVirtualMachineName'), '-nic')]",
+		"sqlNicIpConfigName": "[concat(variables('sqlNicName'), '-ipConfig')]",
 
 		"mongoVirtualMachineName": "[concat('mod20-', parameters('prefix'), '-mongovm')]",
         "mongoVirtualMachineSize": "Standard_DS13_v2",
         "mongoPublicIpAddressName": "[concat(variables('mongoVirtualMachineName'), '-ip')]",
         "mongoNsgName": "[concat(variables('mongoVirtualMachineName'), '-nsg')]",
+        "mongoNicName": "[concat(variables('mongoVirtualMachineName'), '-nic')]",
+		"mongoNicIpConfigName": "[concat(variables('mongoNicName'), '-ipConfig')]",
 
 		"publicIpAddressType": "Dynamic",
 		"publicIpAddressSku": "Basic",
 
 		"virtualNetworkName": "[concat('mod20-', parameters('prefix'), '-vnet')]",
+		"virtualNetworkId": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+		"subnetName": "default",
+		"subnetRef": "[concat(variables('virtualNetworkId'), '/subnets/', variables('subnetName'))]",
 
 		"location": "[resourceGroup().location]"
     },
     "resources": [
-        {
-            "type": "Microsoft.Network/publicIpAddresses",
-            "apiVersion": "2019-06-01",
+		{
+			"type": "Microsoft.Network/publicIpAddresses",
+			"apiVersion": "2019-06-01",
 			"name": "[variables('sqlPublicIpAddressName')]",
 			"location": "[variables('location')]",
-            "sku": {
-                "name": "[variables('publicIpAddressSku')]"
-            },
-            "properties": {
-                "publicIpAllocationMethod": "[variables('publicIpAddressType')]"
-            }
+			"sku": {
+				"name": "[variables('publicIpAddressSku')]"
+			},
+			"properties": {
+				"publicIpAllocationMethod": "[variables('publicIpAddressType')]"
+			}
 		},		
-        {
-            "type": "Microsoft.Network/publicIpAddresses",
-            "apiVersion": "2019-06-01",
+		{
+			"type": "Microsoft.Network/publicIpAddresses",
+			"apiVersion": "2019-06-01",
 			"name": "[variables('mongoPublicIpAddressName')]",
 			"location": "[variables('location')]",
-            "sku": {
-                "name": "[variables('publicIpAddressSku')]"
-            },
-            "properties": {
-                "publicIpAllocationMethod": "[variables('publicIpAddressType')]"
-            }
+			"sku": {
+				"name": "[variables('publicIpAddressSku')]"
+			},
+			"properties": {
+				"publicIpAllocationMethod": "[variables('publicIpAddressType')]"
+			}
 		},
 		{
 			"name": "[variables('mongoNsgName')]",
@@ -76,10 +83,10 @@
 							"protocol": "Tcp",
 							"access": "Allow",
 							"direction": "Inbound",
-                            "sourcePortRange": "*",
+							"sourcePortRange": "*",
 							"destinationPortRange": "22",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "*",
 							"sourcePortRanges": [],
 							"destinationPortRanges": [],
 							"sourceAddressPrefixes": [],
@@ -93,10 +100,10 @@
 							"protocol": "*",
 							"access": "Allow",
 							"direction": "Inbound",
-                            "sourcePortRange": "*",
+							"sourcePortRange": "*",
 							"destinationPortRange": "3300",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "*",
 							"sourcePortRanges": [],
 							"destinationPortRanges": [],
 							"sourceAddressPrefixes": [],
@@ -110,10 +117,10 @@
 							"protocol": "*",
 							"access": "Allow",
 							"direction": "Inbound",
-                            "sourcePortRange": "*",
+							"sourcePortRange": "*",
 							"destinationPortRange": "27017",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "*",
 							"sourcePortRanges": [],
 							"destinationPortRanges": [],
 							"sourceAddressPrefixes": [],
@@ -121,128 +128,128 @@
 						}
 					}
 				],
-                "defaultSecurityRules": [
-                    {
-                        "name": "AllowVnetInBound",
-                        "etag": "W/\"5c344365-fce8-411f-98c7-05d02bfd9c3d\"",
-                        "properties": {
-                            "provisioningState": "Succeeded",
-                            "description": "Allow inbound traffic from all VMs in VNET",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "VirtualNetwork",
-                            "destinationAddressPrefix": "VirtualNetwork",
-                            "access": "Allow",
-                            "priority": 65000,
-                            "direction": "Inbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [],
-                            "destinationAddressPrefixes": []
-                        }
-                    },
-                    {
-                        "name": "AllowAzureLoadBalancerInBound",
-                        "etag": "W/\"5c344365-fce8-411f-98c7-05d02bfd9c3d\"",
-                        "properties": {
-                            "provisioningState": "Succeeded",
-                            "description": "Allow inbound traffic from azure load balancer",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "AzureLoadBalancer",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 65001,
-                            "direction": "Inbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [],
-                            "destinationAddressPrefixes": []
-                        }
-                    },
-                    {
-                        "name": "DenyAllInBound",
-                        "etag": "W/\"5c344365-fce8-411f-98c7-05d02bfd9c3d\"",
-                        "properties": {
-                            "provisioningState": "Succeeded",
-                            "description": "Deny all inbound traffic",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Deny",
-                            "priority": 65500,
-                            "direction": "Inbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [],
-                            "destinationAddressPrefixes": []
-                        }
-                    },
-                    {
-                        "name": "AllowVnetOutBound",
-                        "etag": "W/\"5c344365-fce8-411f-98c7-05d02bfd9c3d\"",
-                        "properties": {
-                            "provisioningState": "Succeeded",
-                            "description": "Allow outbound traffic from all VMs to all VMs in VNET",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "VirtualNetwork",
-                            "destinationAddressPrefix": "VirtualNetwork",
-                            "access": "Allow",
-                            "priority": 65000,
-                            "direction": "Outbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [],
-                            "destinationAddressPrefixes": []
-                        }
-                    },
-                    {
-                        "name": "AllowInternetOutBound",
-                        "etag": "W/\"5c344365-fce8-411f-98c7-05d02bfd9c3d\"",
-                        "properties": {
-                            "provisioningState": "Succeeded",
-                            "description": "Allow outbound traffic from all VMs to Internet",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "Internet",
-                            "access": "Allow",
-                            "priority": 65001,
-                            "direction": "Outbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [],
-                            "destinationAddressPrefixes": []
-                        }
-                    },
-                    {
-                        "name": "DenyAllOutBound",
-                        "etag": "W/\"5c344365-fce8-411f-98c7-05d02bfd9c3d\"",
-                        "properties": {
-                            "provisioningState": "Succeeded",
-                            "description": "Deny all outbound traffic",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Deny",
-                            "priority": 65500,
-                            "direction": "Outbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [],
-                            "destinationAddressPrefixes": []
-                        }
-                    }
-                ]
+				"defaultSecurityRules": [
+					{
+						"name": "AllowVnetInBound",
+						"etag": "W/\"5c344365-fce8-411f-98c7-05d02bfd9c3d\"",
+						"properties": {
+							"provisioningState": "Succeeded",
+							"description": "Allow inbound traffic from all VMs in VNET",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "VirtualNetwork",
+							"destinationAddressPrefix": "VirtualNetwork",
+							"access": "Allow",
+							"priority": 65000,
+							"direction": "Inbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					},
+					{
+						"name": "AllowAzureLoadBalancerInBound",
+						"etag": "W/\"5c344365-fce8-411f-98c7-05d02bfd9c3d\"",
+						"properties": {
+							"provisioningState": "Succeeded",
+							"description": "Allow inbound traffic from azure load balancer",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "AzureLoadBalancer",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 65001,
+							"direction": "Inbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					},
+					{
+						"name": "DenyAllInBound",
+						"etag": "W/\"5c344365-fce8-411f-98c7-05d02bfd9c3d\"",
+						"properties": {
+							"provisioningState": "Succeeded",
+							"description": "Deny all inbound traffic",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "*",
+							"access": "Deny",
+							"priority": 65500,
+							"direction": "Inbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					},
+					{
+						"name": "AllowVnetOutBound",
+						"etag": "W/\"5c344365-fce8-411f-98c7-05d02bfd9c3d\"",
+						"properties": {
+							"provisioningState": "Succeeded",
+							"description": "Allow outbound traffic from all VMs to all VMs in VNET",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "VirtualNetwork",
+							"destinationAddressPrefix": "VirtualNetwork",
+							"access": "Allow",
+							"priority": 65000,
+							"direction": "Outbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					},
+					{
+						"name": "AllowInternetOutBound",
+						"etag": "W/\"5c344365-fce8-411f-98c7-05d02bfd9c3d\"",
+						"properties": {
+							"provisioningState": "Succeeded",
+							"description": "Allow outbound traffic from all VMs to Internet",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "Internet",
+							"access": "Allow",
+							"priority": 65001,
+							"direction": "Outbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					},
+					{
+						"name": "DenyAllOutBound",
+						"etag": "W/\"5c344365-fce8-411f-98c7-05d02bfd9c3d\"",
+						"properties": {
+							"provisioningState": "Succeeded",
+							"description": "Deny all outbound traffic",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "*",
+							"access": "Deny",
+							"priority": 65500,
+							"direction": "Outbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					}
+				]
 			}
 		},
 		{
@@ -259,10 +266,10 @@
 							"protocol": "Tcp",
 							"access": "Allow",
 							"direction": "Inbound",
-                            "sourcePortRange": "*",
+							"sourcePortRange": "*",
 							"destinationPortRange": "3389",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "*",
 							"sourcePortRanges": [],
 							"destinationPortRanges": [],
 							"sourceAddressPrefixes": [],
@@ -276,10 +283,10 @@
 							"protocol": "Tcp",
 							"access": "Allow",
 							"direction": "Inbound",
-                            "sourcePortRange": "*",
+							"sourcePortRange": "*",
 							"destinationPortRange": "1433",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "*",
 							"sourcePortRanges": [],
 							"destinationPortRanges": [],
 							"sourceAddressPrefixes": [],
@@ -287,171 +294,223 @@
 						}
 					}
 				],
-                "defaultSecurityRules": [
-                    {
-                        "name": "AllowVnetInBound",
-                        "etag": "W/\"e044fc40-808d-4b7b-976c-9e4828e879c0\"",
-                        "properties": {
-                            "provisioningState": "Succeeded",
-                            "description": "Allow inbound traffic from all VMs in VNET",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "VirtualNetwork",
-                            "destinationAddressPrefix": "VirtualNetwork",
-                            "access": "Allow",
-                            "priority": 65000,
-                            "direction": "Inbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [],
-                            "destinationAddressPrefixes": []
-                        }
-                    },
-                    {
-                        "name": "AllowAzureLoadBalancerInBound",
-                        "etag": "W/\"e044fc40-808d-4b7b-976c-9e4828e879c0\"",
-                        "properties": {
-                            "provisioningState": "Succeeded",
-                            "description": "Allow inbound traffic from azure load balancer",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "AzureLoadBalancer",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 65001,
-                            "direction": "Inbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [],
-                            "destinationAddressPrefixes": []
-                        }
-                    },
-                    {
-                        "name": "DenyAllInBound",
-                        "etag": "W/\"e044fc40-808d-4b7b-976c-9e4828e879c0\"",
-                        "properties": {
-                            "provisioningState": "Succeeded",
-                            "description": "Deny all inbound traffic",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Deny",
-                            "priority": 65500,
-                            "direction": "Inbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [],
-                            "destinationAddressPrefixes": []
-                        }
-                    },
-                    {
-                        "name": "AllowVnetOutBound",
-                        "etag": "W/\"e044fc40-808d-4b7b-976c-9e4828e879c0\"",
-                        "properties": {
-                            "provisioningState": "Succeeded",
-                            "description": "Allow outbound traffic from all VMs to all VMs in VNET",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "VirtualNetwork",
-                            "destinationAddressPrefix": "VirtualNetwork",
-                            "access": "Allow",
-                            "priority": 65000,
-                            "direction": "Outbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [],
-                            "destinationAddressPrefixes": []
-                        }
-                    },
-                    {
-                        "name": "AllowInternetOutBound",
-                        "etag": "W/\"e044fc40-808d-4b7b-976c-9e4828e879c0\"",
-                        "properties": {
-                            "provisioningState": "Succeeded",
-                            "description": "Allow outbound traffic from all VMs to Internet",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "Internet",
-                            "access": "Allow",
-                            "priority": 65001,
-                            "direction": "Outbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [],
-                            "destinationAddressPrefixes": []
-                        }
-                    },
-                    {
-                        "name": "DenyAllOutBound",
-                        "etag": "W/\"e044fc40-808d-4b7b-976c-9e4828e879c0\"",
-                        "properties": {
-                            "provisioningState": "Succeeded",
-                            "description": "Deny all outbound traffic",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Deny",
-                            "priority": 65500,
-                            "direction": "Outbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [],
-                            "destinationAddressPrefixes": []
-                        }
-                    }
-                ]
+				"defaultSecurityRules": [
+					{
+						"name": "AllowVnetInBound",
+						"etag": "W/\"e044fc40-808d-4b7b-976c-9e4828e879c0\"",
+						"properties": {
+							"provisioningState": "Succeeded",
+							"description": "Allow inbound traffic from all VMs in VNET",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "VirtualNetwork",
+							"destinationAddressPrefix": "VirtualNetwork",
+							"access": "Allow",
+							"priority": 65000,
+							"direction": "Inbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					},
+					{
+						"name": "AllowAzureLoadBalancerInBound",
+						"etag": "W/\"e044fc40-808d-4b7b-976c-9e4828e879c0\"",
+						"properties": {
+							"provisioningState": "Succeeded",
+							"description": "Allow inbound traffic from azure load balancer",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "AzureLoadBalancer",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 65001,
+							"direction": "Inbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					},
+					{
+						"name": "DenyAllInBound",
+						"etag": "W/\"e044fc40-808d-4b7b-976c-9e4828e879c0\"",
+						"properties": {
+							"provisioningState": "Succeeded",
+							"description": "Deny all inbound traffic",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "*",
+							"access": "Deny",
+							"priority": 65500,
+							"direction": "Inbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					},
+					{
+						"name": "AllowVnetOutBound",
+						"etag": "W/\"e044fc40-808d-4b7b-976c-9e4828e879c0\"",
+						"properties": {
+							"provisioningState": "Succeeded",
+							"description": "Allow outbound traffic from all VMs to all VMs in VNET",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "VirtualNetwork",
+							"destinationAddressPrefix": "VirtualNetwork",
+							"access": "Allow",
+							"priority": 65000,
+							"direction": "Outbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					},
+					{
+						"name": "AllowInternetOutBound",
+						"etag": "W/\"e044fc40-808d-4b7b-976c-9e4828e879c0\"",
+						"properties": {
+							"provisioningState": "Succeeded",
+							"description": "Allow outbound traffic from all VMs to Internet",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "Internet",
+							"access": "Allow",
+							"priority": 65001,
+							"direction": "Outbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					},
+					{
+						"name": "DenyAllOutBound",
+						"etag": "W/\"e044fc40-808d-4b7b-976c-9e4828e879c0\"",
+						"properties": {
+							"provisioningState": "Succeeded",
+							"description": "Deny all outbound traffic",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "*",
+							"access": "Deny",
+							"priority": 65500,
+							"direction": "Outbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					}
+				]
 			}
 		},
 		{
-            "type": "Microsoft.Network/virtualNetworks",
-            "apiVersion": "2019-06-01",
-            "name": "[variables('virtualNetworkName')]",
+			"type": "Microsoft.Network/virtualNetworks",
+			"apiVersion": "2019-06-01",
+			"name": "[variables('virtualNetworkName')]",
 			"location": "[variables('location')]",
 			"properties": {
-                "addressSpace": {
-                    "addressPrefixes": [
-                        "172.16.0.0/24"
-                    ]
-                },
-                "subnets": [
-                    {
-                        "name": "default",
-                        "properties": {
-                            "addressPrefix": "172.16.0.0/24",
-                            "delegations": [],
-                            "privateEndpointNetworkPolicies": "Enabled",
-                            "privateLinkServiceNetworkPolicies": "Enabled"
-                        }
-                    }
-                ],
-                "virtualNetworkPeerings": [],
-                "enableDdosProtection": false,
-                "enableVmProtection": false
+				"addressSpace": {
+					"addressPrefixes": [
+						"172.16.0.0/24"
+					]
+				},
+				"subnets": [
+					{
+						"name": "[variables('subnetName')]",
+						"properties": {
+							"addressPrefix": "172.16.0.0/24",
+							"delegations": [],
+							"privateEndpointNetworkPolicies": "Enabled",
+							"privateLinkServiceNetworkPolicies": "Enabled"
+						}
+					}
+				],
+				"virtualNetworkPeerings": [],
+				"enableDdosProtection": false,
+				"enableVmProtection": false
 			}
 		},
-        {
-            "type": "Microsoft.Network/virtualNetworks/subnets",
+		{
+			"type": "Microsoft.Network/virtualNetworks/subnets",
+			"apiVersion": "2019-06-01",
+			"name": "[concat(variables('virtualNetworkName'), '/', variables('subnetName'))]",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
+			],
+			"properties": {
+				"addressPrefix": "172.16.0.0/24",
+				"delegations": [],
+				"privateEndpointNetworkPolicies": "Enabled",
+				"privateLinkServiceNetworkPolicies": "Enabled"
+			}
+		},
+		{
+            "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2019-06-01",
-            "name": "[concat(variables('virtualNetworkName'), '/default')]",
+            "name": "[variables('mongoNicName')]",
+			"location": "[variables('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
-            ],
-            "properties": {
-                "addressPrefix": "172.16.0.0/24",
-                "delegations": [],
-                "privateEndpointNetworkPolicies": "Enabled",
-                "privateLinkServiceNetworkPolicies": "Enabled"
-            }
-        }
+				"[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+				"[concat('Microsoft.Network/publicIpAddresses/', variables('mongoPublicIpAddressName'))]"
+            ],			
+			"properties": {
+				"ipConfigurations": [
+					{
+						"name": "[variables('mongoNicIpConfigName')]",
+						"properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+							"privateIPAllocationMethod": "Dynamic",
+							"publicIPAddress": {
+                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('mongoPublicIpAddressName'))]"
+                            }
+						}
+					}
+				]
+			}
+		},
+		{
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2019-06-01",
+            "name": "[variables('sqlNicName')]",
+			"location": "[variables('location')]",
+            "dependsOn": [
+				"[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+				"[concat('Microsoft.Network/publicIpAddresses/', variables('sqlPublicIpAddressName'))]"
+            ],			
+			"properties": {
+				"ipConfigurations": [
+					{
+						"name": "[variables('sqlNicIpConfigName')]",
+						"properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+							"privateIPAllocationMethod": "Dynamic",
+							"publicIPAddress": {
+                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('sqlPublicIpAddressName'))]"
+                            }
+						}
+					}
+				]
+			}
+		}
 	],
     "outputs": {
         "username": {
