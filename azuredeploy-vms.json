@@ -15,7 +15,13 @@
             "metadata": {
                 "description": "The username for the VMs and for the Azure SQL DB"
             }
-        }
+        },
+		"password": {
+			"type": "securestring",
+            "metadata": {
+                "description": "The password. No '@', '!' or using the username"
+            }
+		}
     },
     "variables": {
         "resourceGroupName": "[concat('mod20-', parameters('prefix'), '-tailwindtraders')]",
@@ -26,7 +32,6 @@
         "sqlNsgName": "[concat(variables('sqlVirtualMachineName'), '-nsg')]",
         "sqlNicName": "[concat(variables('sqlVirtualMachineName'), '-nic')]",
 		"sqlNicIpConfigName": "[concat(variables('sqlNicName'), '-ipConfig')]",
-		"sqlOsDiskName": "[concat(variables('sqlVirtualMachineName'), '-osDisk')]",
 
 		"mongoVirtualMachineName": "[concat('mod20-', parameters('prefix'), '-mongovm')]",
         "mongoVirtualMachineSize": "Standard_DS13_v2",
@@ -34,7 +39,6 @@
         "mongoNsgName": "[concat(variables('mongoVirtualMachineName'), '-nsg')]",
         "mongoNicName": "[concat(variables('mongoVirtualMachineName'), '-nic')]",
 		"mongoNicIpConfigName": "[concat(variables('mongoNicName'), '-ipConfig')]",
-		"mongoOsDiskName": "[concat(variables('mongoVirtualMachineName'), '-osDisk')]",
 
 		"publicIpAddressType": "Dynamic",
 		"publicIpAddressSku": "Basic",
@@ -514,58 +518,22 @@
 			}
 		},
 		{
-            "type": "Microsoft.Compute/disks",
-            "apiVersion": "2018-06-01",
-            "name": "[variables('mongoOsDiskName')]",
-			"location": "[variables('location')]",
-            "sku": {
-                "name": "Premium_LRS",
-                "tier": "Premium"
-            },
-            "properties": {
-                "osType": "Linux",
-                "creationData": {
-                    "createOption": "FromImage",
-                    "imageReference": {
-                        "id": "/Subscriptions/7458e143-5356-493e-8b8b-060244d15bdb/Providers/Microsoft.Compute/Locations/westeurope/Publishers/canonical/ArtifactTypes/VMImage/Offers/ubuntuserver/Skus/18.04-lts/Versions/18.04.201908131"
-                    }
-                },
-                "diskSizeGB": 30,
-                "diskIOPSReadWrite": 120,
-                "diskMBpsReadWrite": 25
-            }
-		},
-		{
-            "type": "Microsoft.Compute/disks",
-            "apiVersion": "2018-06-01",
-            "name": "[variables('sqlOsDiskName')]",
-			"location": "[variables('location')]",
-            "sku": {
-                "name": "Premium_LRS",
-                "tier": "Premium"
-            },
-            "properties": {
-                "osType": "Windows",
-                "creationData": {
-                    "createOption": "FromImage",
-                    "imageReference": {
-                        "id": "/Subscriptions/cd400f31-6f94-40ab-863a-673192a3c0d0/Providers/Microsoft.Compute/Locations/westeurope/Publishers/MicrosoftSQLServer/ArtifactTypes/VMImage/Offers/SQL2012SP4-WS2012R2/Skus/Web/Versions/11.1.190709"
-                    }
-                },
-                "diskSizeGB": 127,
-                "diskIOPSReadWrite": 500,
-                "diskMBpsReadWrite": 100
-            }
-		},
-		{
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-03-01",
-            "name": "[parameters('mongoVirtualMachineName')]",
+            "name": "[variables('mongoVirtualMachineName')]",
 			"location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('mongoNicName'))]"
             ],
 			"properties": {
+				"osProfile": {
+					"computerName": "[variables('mongoVirtualMachineName')]",
+					"adminUsername": "[parameters('username')]",
+					"adminPassword": "[parameters('password')]",
+					"linuxConfiguration": {
+						"disablePasswordAuthentication": false
+					}
+				},
                 "hardwareProfile": {
                     "vmSize": "Standard_DS1_v2"
                 },
