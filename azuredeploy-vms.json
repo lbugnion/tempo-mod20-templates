@@ -2,50 +2,49 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-		"prefix": {
+        "prefix": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "A unique prefix in lowercase"
             }
-		},
-		"username": {
-			"type": "string",
-			"defaultValue": "tailwind",
+        },
+        "username": {
+            "type": "string",
+            "defaultValue": "tailwind",
             "metadata": {
                 "description": "The username for the VMs and for the Azure SQL DB"
             }
-		},
-		"password": {
-			"type": "securestring",
+        },
+        "password": {
+            "type": "securestring",
             "metadata": {
                 "description": "The password. No '@', '!' or using the username"
             }
-		}
-	},
-	
+        }
+    },
     "variables": {
-		"resourceGroupName": "[concat('mod20-', parameters('prefix'), '-tailwindtraders')]",
-		"sqlVirtualMachineName": "[concat('mod20-', parameters('prefix'), '-sqlvm')]",
-		"sqlVirtualMachineSize": "Standard_DS13_v2",
-        "sqlPublicIpAddressName": "[concat(parameters('sqlVirtualMachineName'), '-ip')]",
+        "resourceGroupName": "[concat('mod20-', parameters('prefix'), '-tailwindtraders')]",
+        "sqlVirtualMachineName": "[concat('mod20-', parameters('prefix'), '-sqlvm')]",
+        "sqlVirtualMachineSize": "Standard_DS13_v2",
+        "sqlPublicIpAddressName": "[concat(variables('sqlVirtualMachineName'), '-ip')]",
         "sqlPublicIpAddressType": "Dynamic",
-        "sqlPublicIpAddressSku": "Basic"
-	},
-	
+		"sqlPublicIpAddressSku": "Basic",
+		"location": "[resourceGroup().location]"
+    },
     "resources": [
         {
             "type": "Microsoft.Network/publicIpAddresses",
             "apiVersion": "2019-06-01",
-            "name": "[variables('sqlPublicIpAddressName')]",
-            "location": "[parameters('location')]",
+			"name": "[variables('sqlPublicIpAddressName')]",
+			"location": "[variables('location')]",
             "sku": {
                 "name": "[variables('sqlPublicIpAddressSku')]"
             },
             "properties": {
                 "publicIpAllocationMethod": "[variables('sqlPublicIpAddressType')]"
             }
-		}
+        }
     ],
     "outputs": {
         "adminUsername": {
