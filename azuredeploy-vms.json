@@ -556,7 +556,30 @@
 						"id": "[resourceId('Microsoft.Network/networkInterfaces', variables('mongoNicName'))]"
 					}]
 				}
-			}
+			},
+			"resources": [{
+				"apiVersion": "2019-03-01",
+				"type": "extensions",
+				"name": "install-mongo",
+				"location": "[variables('location')]",
+				"dependsOn": [
+					"[concat('Microsoft.Compute/virtualMachines/', variables('mongoVirtualMachineName'))]"
+				],
+				"properties": {
+					"publisher": "Microsoft.Azure.Extensions",
+					"type": "CustomScript",
+					"typeHandlerVersion": "2.0",
+					"autoUpgradeMinorVersion": true,
+					"settings": {
+						"fileUris": [
+							"https://raw.githubusercontent.com/lbugnion/tempo-mod20-templates/master/configure-mongo.sh"
+						]
+					},
+					"protectedSettings": {
+						"commandToExecute": "[concat('sudo sh configure-mongo.sh ', parameters('username'), ' ', parameters('password'))]"
+					}
+				}
+			}]
 		}
 	],
     "outputs": {
