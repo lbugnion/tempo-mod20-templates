@@ -24,17 +24,13 @@
 		}
     },
     "variables": {
-        "resourceGroupName": "[concat('mod20-', parameters('prefix'), '-tailwindtraders')]",
-		
 		"sqlVirtualMachineName": "[concat('mod20-', parameters('prefix'), '-sqlvm')]",
-        "sqlVirtualMachineSize": "Standard_DS13_v2",
         "sqlPublicIpAddressName": "[concat(variables('sqlVirtualMachineName'), '-ip')]",
         "sqlNsgName": "[concat(variables('sqlVirtualMachineName'), '-nsg')]",
         "sqlNicName": "[concat(variables('sqlVirtualMachineName'), '-nic')]",
 		"sqlNicIpConfigName": "[concat(variables('sqlNicName'), '-ipConfig')]",
 
 		"mongoVirtualMachineName": "[concat('mod20-', parameters('prefix'), '-mongovm')]",
-        "mongoVirtualMachineSize": "Standard_DS13_v2",
         "mongoPublicIpAddressName": "[concat(variables('mongoVirtualMachineName'), '-ip')]",
         "mongoNsgName": "[concat(variables('mongoVirtualMachineName'), '-nsg')]",
         "mongoNicName": "[concat(variables('mongoVirtualMachineName'), '-nic')]",
@@ -545,7 +541,7 @@
 						"version": "latest"
 					},
 					"osDisk": {
-						"createOption": "fromImage",
+						"createOption": "FromImage",
 						"managedDisk": {
 							"storageAccountType": "Premium_LRS"
 						}
