@@ -1,0 +1,20 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+    "parameters": {
+		"prefix": {
+			"type": "string"
+		},
+		"username": {
+			"type": "string",
+			"defaultValue": "username"
+		},
+		"password": {
+			"type": "securestring"
+		}
+    },
+    "variables": {
+    },
+    "resources": [
+    ]
+}
