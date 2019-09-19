@@ -18,6 +18,7 @@
         },
 		"password": {
 			"type": "securestring",
+			"defaultValue": "traderstraders42.",
             "metadata": {
                 "description": "The password. No '@', '!' or using the username"
             }
@@ -680,11 +681,5 @@
 				}
 			}
 		}		
-	],
-    "outputs": {
-        "username": {
-            "type": "string",
-            "value": "[parameters('username')]"
-        }
-    }
+	]
 }
