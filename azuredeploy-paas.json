@@ -1,0 +1,95 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "prefix": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "A unique prefix in lowercase"
+            }
+        },
+        "username": {
+            "type": "string",
+            "defaultValue": "tailwind",
+            "metadata": {
+                "description": "The username for the VMs and for the Azure SQL DB"
+            }
+        },
+		"password": {
+			"type": "securestring",
+			"defaultValue": "traderstraders42.",
+            "metadata": {
+                "description": "The password. No '@', '!' or using the username"
+            }
+		}
+    },
+    "variables": {
+		"virtualNetworkName": "[concat('mod20-', parameters('prefix'), '-paas-vnet')]",
+        "subnetName": "default",
+        
+        "dmsName": "[concat('mod20-', parameters('prefix'), '-dms')]",
+
+		"location": "[resourceGroup().location]",
+    },
+    "resources": [
+		{
+			"type": "Microsoft.Network/virtualNetworks",
+			"apiVersion": "2019-06-01",
+			"name": "[variables('virtualNetworkName')]",
+			"location": "[variables('location')]",
+			"properties": {
+				"addressSpace": {
+					"addressPrefixes": [
+						"10.0.0.0/16"
+					]
+				},
+				"subnets": [
+					{
+						"name": "[variables('subnetName')]",
+						"properties": {
+							"addressPrefix": "10.0.0.0/24",
+							"delegations": [],
+							"privateEndpointNetworkPolicies": "Enabled",
+							"privateLinkServiceNetworkPolicies": "Enabled"
+						}
+					}
+				],
+				"virtualNetworkPeerings": [],
+				"enableDdosProtection": false,
+				"enableVmProtection": false
+			}
+		},
+		{
+			"type": "Microsoft.Network/virtualNetworks/subnets",
+			"apiVersion": "2019-06-01",
+			"name": "[concat(variables('virtualNetworkName'), '/', variables('subnetName'))]",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
+			],
+			"properties": {
+				"addressPrefix": "10.0.0.0/24",
+				"delegations": [],
+				"privateEndpointNetworkPolicies": "Enabled",
+				"privateLinkServiceNetworkPolicies": "Enabled"
+			}
+		},
+		{
+			"type": "Microsoft.DataMigration/services",
+			"sku": {
+				"name": "Premium_4vCores",
+				"tier": "Premium",
+				"size": "4 vCores"
+			},
+			"name": "[variables('dmsName')]",
+			"apiVersion": "2017-11-15-privatepreview",
+			"location": "[variables('location')]",
+			"properties": {
+				"virtualSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
+			]
+		}
+	]
+}
