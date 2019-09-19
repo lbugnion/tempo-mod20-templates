@@ -41,6 +41,7 @@
         "currentStack": "dotnetcore",
         "apiUrl": "/api/v1",
         "apiUrlShoppingCart": "/api/v1",
+        "locationCode": "[toLower(replace(variables('location'), ' ', ''))]",
         
         "appInsightsName": "[variables('name')]",
         
@@ -58,7 +59,6 @@
         "autoPauseDelay": "",
         "sqlSkuName": "Basic",
         "sqlTier": "Basic",
-        "locationCode": "[toLower(replace(variables('location'), ' ', ''))]",
         
         "cosmosAccountName": "[concat(variables('name'), '-mongo')]",
         "cosmosBakAccountName": "[concat(variables('cosmosAccountName'), '-bak')]",
@@ -174,7 +174,7 @@
                     ],
                     "properties": {
                         "RepoUrl": "https://github.com/lbugnion/TailwindTraders-Website",
-                        "branch": "monolith",
+                        "branch": "master",
                         "IsManualIntegration": true
                     }
                 }
