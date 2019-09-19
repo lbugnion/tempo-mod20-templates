@@ -25,22 +25,22 @@
 		}
     },
     "variables": {
-		"sqlVirtualMachineName": "[concat('mod20-', parameters('prefix'), '-sqlvm')]",
+		"sqlVirtualMachineName": "[tolower(concat('mod20', parameters('prefix'), 'sqlvm'))]",
         "sqlPublicIpAddressName": "[concat(variables('sqlVirtualMachineName'), '-ip')]",
         "sqlNsgName": "[concat(variables('sqlVirtualMachineName'), '-nsg')]",
         "sqlNicName": "[concat(variables('sqlVirtualMachineName'), '-nic')]",
-		"sqlNicIpConfigName": "[concat(variables('sqlNicName'), '-ipConfig')]",
+		"sqlNicIpConfigName": "[concat(variables('sqlNicName'), '-ipconfig')]",
 
-		"mongoVirtualMachineName": "[concat('mod20-', parameters('prefix'), '-mongovm')]",
+		"mongoVirtualMachineName": "[tolower(concat('mod20', parameters('prefix'), 'mongovm'))]",
         "mongoPublicIpAddressName": "[concat(variables('mongoVirtualMachineName'), '-ip')]",
         "mongoNsgName": "[concat(variables('mongoVirtualMachineName'), '-nsg')]",
         "mongoNicName": "[concat(variables('mongoVirtualMachineName'), '-nic')]",
-		"mongoNicIpConfigName": "[concat(variables('mongoNicName'), '-ipConfig')]",
+		"mongoNicIpConfigName": "[concat(variables('mongoNicName'), '-ipconfig')]",
 
 		"publicIpAddressType": "Dynamic",
 		"publicIpAddressSku": "Basic",
 
-		"virtualNetworkName": "[concat('mod20-', parameters('prefix'), '-vnet')]",
+		"virtualNetworkName": "[tolower(concat('mod20', parameters('prefix'), 'vnet'))]",
 		"virtualNetworkId": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
 		"subnetName": "default",
 		"subnetRef": "[concat(variables('virtualNetworkId'), '/subnets/', variables('subnetName'))]",
@@ -569,7 +569,7 @@
 					"autoUpgradeMinorVersion": true,
 					"settings": {
 						"fileUris": [
-							"https://raw.githubusercontent.com/lbugnion/tempo-mod20-templates/master/configure-mongo.sh"
+							"https://raw.githubusercontent.com/microsoft/ignite-learning-paths/master/mod/mod20/DeploymentTemplates/configure-mongo.sh"
 						]
 					},
 					"protectedSettings": {
