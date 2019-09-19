@@ -64,7 +64,9 @@
         "cosmosBakAccountName": "[concat(variables('cosmosAccountName'), '-bak')]",
         "cosmosDatabaseName": "tailwind",
 
-		"virtualNetworkName": "[concat(variables('name'), '-vnet')]",
+        "storageAccountName": "[concat(variables('name'), 'storage')]",
+
+        "virtualNetworkName": "[concat(variables('name'), '-vnet')]",
 		"subnetName": "default",
         "dmsName": "[concat(variables('name'), '-dms')]"
     },
@@ -389,6 +391,38 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
             ]
-        }        
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "name": "[variables('storageAccountName')]",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "enabled": true
+                        },
+                        "blob": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+            }
+        }
     ]
 }
