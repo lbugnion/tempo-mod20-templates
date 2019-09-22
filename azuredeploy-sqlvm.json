@@ -37,8 +37,7 @@
         "sqlNicName": "[concat(variables('sqlVirtualMachineName'), '-nic')]",
 		"sqlNicIpConfigName": "[concat(variables('sqlNicName'), '-ipconfig')]",
         "subnetRef": "[concat(variables('virtualNetworkId'), '/subnets/', variables('subnetName'))]",
-        "storageAccountName": "[tolower(concat('mod20', parameters('prefix'), 'vmstore'))]",
-        "sqlVmDiagnoticsName": "[concat(variables('sqlVirtualMachineName'), 'testdiag')]"
+        "storageAccountName": "[tolower(concat('mod20', parameters('prefix'), 'vmstore'))]"
     },
     "resources": [
 		{
