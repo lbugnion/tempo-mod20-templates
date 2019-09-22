@@ -25,7 +25,7 @@
 		}
     },
     "variables": {
-        "name": "[toLower(concat('mod20', parameters('prefix'), 'tailwind'))]",
+        "name": "[toLower(concat('mod20', parameters('prefix')))]",
         "subscriptionId": "[subscription().id]",
         "location": "[resourceGroup().location]",
         
@@ -64,7 +64,7 @@
         "cosmosBakAccountName": "[concat(variables('cosmosAccountName'), '-bak')]",
         "cosmosDatabaseName": "tailwind",
 
-        "storageAccountName": "[concat(variables('name'), 'storage')]",
+        "storageAccountName": "[concat(variables('name'), 'store')]",
 
         "virtualNetworkName": "[concat(variables('name'), '-vnet')]",
 		"subnetName": "default",

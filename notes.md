@@ -1,0 +1,2 @@
+- Rules for password
+- Prefix should be maximum 4 characters long (A-Z..a-z..0-9)
