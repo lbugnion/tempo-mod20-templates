@@ -1,39 +1,41 @@
-# MOD20 
+# MOD20 Moving Your Database to Azure
 
-## Initial deployment
+## Abstract
 
-The deployment for this session is split in two parts:
+Northwind kept the bulk of its data in an on-premises data center, which hosted servers running both SQL Server and MongoDB. After the acquisition, Tailwind Traders worked with the Northwind team to move their data center to Azure. 
 
-- [Data source](#datasource): This deployment installs two virtual machines; a Linux VM running MongoDB for the shopping cart; and a Windows Server 2012 VM running SQL Server 2012 for the products. These VMs are the source of the migration.
+In this session, you’ll see how to migrate an on-premises MongoDB database to Azure Cosmos DB and SQL Server database to an Azure SQL Server. From there, you’ll walk through performing the migration and ensuring minimal downtime while you switch over to the cloud-hosted providers. 
 
-- [Platform as a Service](#paas): This deployment installs the following services:
-    - An Azure SQL server with two databases. The first database will be the target of the migration for the products. The second database is a backup that will be used during the demo in case the migration fails for any reason.
-    - A CosmosDB database which will be used as the target of the migration for the shopping cart.
-    - Another CosmosDB database as a backup that will be used during the demo in case the migration fails for any reason.
-    - The front-end website connecting to the databases to show the catalog.
-    - A storage account we'll use to configure advanced security features for the SQL database.
-    - The Azure Database Migration Service we'll use for the demo.
+## Outline, Powerpoint slides, Session recording
 
-The idea of the automated deployment is that you can deploy and delete the resources as often as you need.
+You can see the [outline for this session here](./00-outline.md). 
 
-<a id="datasource"></a>
-### Data source (Virtual Machines, IaaS)
+The [Powerpoint slides are available online here](https://microsoft.sharepoint.com/:p:/t/CloudDevAdvocacy/EV37sX0MXLtAgtPPYj8lEwYBF6BaxEvB6mDGS5T4-t72zA?e=yjAxyg). Note that you will need some permissions to view these slides.
 
-In order to install the virtual machines that will be used as the source of the migration for the demo, follow these steps:
+There is a [recording of a dry run for this session here](https://msit.microsoftstream.com/video/564c9557-4737-4f18-9ddd-1b11e9a19996).
 
-1. Click on the button below to open the deployment page.
+<iframe width="853" height="480" src="https://msit.microsoftstream.com/embed/video/564c9557-4737-4f18-9ddd-1b11e9a19996?autoplay=false&amp;showinfo=true" allowfullscreen style="border:none;"></iframe>
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Flbugnion%2Ftempo-mod20-templates%2Fmaster%2Fazuredeploy-vms.json" target="_blank">
-    <img src="http://azuredeploy.net/deploybutton.png"/>
-</a>
+## Demos deployment and preparation
 
-2. In the template page, enter the following information:
+In order to run the demos, you will need to run two deployments to Azure. [This is explained in details here](./01-preparation.md).
 
-    - 
+## Running the demos
 
-<a id="paas"></a>
-### PaaS (website, Cosmos, Azure SQL, DMS)
+You will find the following information about the demos
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Flbugnion%2Ftempo-mod20-templates%2Fmaster%2Fazuredeploy-paas.json" target="_blank">
-    <img src="http://azuredeploy.net/deploybutton.png"/>
-</a>
+## See also on Microsoft Learn
+
+- [LEARN: Work with NoSQL data in Azure Cosmos DB](https://aka.ms/mod20g-learn-nosql)
+
+- [LEARN: Work with relational data in Azure](https://aka.ms/mod20g-learn-sql)
+
+- [DOCS: Azure Database for PostgreSQL Documentation](https://aka.ms/mod20g-docs-postgresql)
+
+## Other resources
+
+- [Total Cost of Ownership (TCO) Calculator](https://aka.ms/mod20g-tco)
+
+- [Azure Migrate](https://aka.ms/mod20g-migrate), a central hub for starting, executing, and tracking your Azure migration
+
+- [Find an expert near you](https://aka.ms/mod20g-experts)
