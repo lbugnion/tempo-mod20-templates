@@ -424,21 +424,58 @@
                 }
             }
         },
-        {
-            "type": "Microsoft.SqlVirtualMachine/sqlVirtualMachines",
-            "apiVersion": "2017-03-01-preview",
-            "name": "[variables('sqlVirtualMachineName')]",
+		{
+			"apiVersion": "2015-06-15",
+			"type": "Microsoft.Compute/virtualMachines/extensions",
+			"name": "[concat(variables('sqlVirtualMachineName'), '/SqlIaasExtension')]",
 			"location": "[variables('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', variables('sqlVirtualMachineName'))]"
-            ],
-            "properties": {
-                "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', variables('sqlVirtualMachineName'))]",
-                "sqlImageOffer": "SQL2012-WS2012R2",
-                "sqlServerLicenseType": "PAYG",
-                "sqlManagement": "Full",
-                "sqlImageSku": "Standard"
-            }
-        }
+			"dependsOn": [
+				"[concat('Microsoft.Compute/virtualMachines/', variables('sqlVirtualMachineName'))]"
+			],
+			"properties": {
+				"type": "SqlIaaSAgent",
+				"publisher": "Microsoft.SqlServer.Management",
+				"typeHandlerVersion": "2.0",
+				"autoUpgradeMinorVersion": "true",
+				"settings": {
+					"AutoTelemetrySettings": {
+						"Region": "[variables('location')]"
+					},
+					"AutoPatchingSettings": {
+						"PatchCategory": "WindowsMandatoryUpdates",
+						"Enable": true,
+						"DayOfWeek": "Sunday",
+						"MaintenanceWindowStartingHour": "2",
+						"MaintenanceWindowDuration": "60"
+					},
+					"KeyVaultCredentialSettings": {
+						"Enable": false,
+						"CredentialName": ""
+					},
+					"ServerConfigurationsManagementSettings": {
+						"SQLConnectivityUpdateSettings": {
+							"ConnectivityType": "Public",
+							"Port": 1433
+						},
+						"SQLWorkloadTypeUpdateSettings": {
+							"SQLWorkloadType": "GENERAL"
+						},
+						"SQLStorageUpdateSettings": {
+							"DiskCount": 1,
+							"NumberOfColumns": 1,
+							"StartingDeviceID": 2,
+							"DiskConfigurationType": "NEW"
+						},
+						"AdditionalFeaturesServerConfigurations": {
+							"IsRServicesEnabled": "false"
+						}
+					}
+				},
+				"protectedSettings": {
+					"SQLAuthUpdateUserName": "[parameters('username')]",
+					"SQLAuthUpdatePassword": "[parameters('password')]"
+				}
+			}
+		}
     ]
 }
